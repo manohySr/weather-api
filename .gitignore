@@ -1,0 +1,24 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+tmdb-app
+
+# Output folders
+/bin/
+/build/
+/dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE/editor config
+.vscode/
+.idea/
+
+# Logs
+*.log
