@@ -29,7 +29,7 @@ type ApiResponse struct {
 }
 
 func GetWeatherCurrentData(city string) (*CurrentWeatherResponse, error) {
-	var key = os.Getenv("key")
+	var key string = os.Getenv("key")
 	var url string = fmt.Sprintf("https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/%s?unitGroup=us&key=%s&contentType=json", city, key)
 	res, err := http.Get(url)
 	if err != nil {

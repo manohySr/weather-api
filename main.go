@@ -19,6 +19,9 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 	redisClient := cache.InitRedis()
+	if redisClient == nil {
+		log.Println("Warning: Running without Redis cache")
+	}
 	weatherService := weather.NewWeatherService(redisClient)
 	res, err := weatherService.GetWeather("london")
 
