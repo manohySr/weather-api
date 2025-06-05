@@ -1,0 +1,9 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: weather_cache
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
