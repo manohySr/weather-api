@@ -10,6 +10,9 @@ A weather API wrapper service that fetches weather data from Visual Crossing API
 - 🔒 Environment variable configuration
 - 🐳 Docker support for Redis
 
+![image](https://github.com/user-attachments/assets/78f04cab-118f-457f-b52c-c5c87699361a)
+
+
 ## Prerequisites
 
 - Go 1.16 or higher
