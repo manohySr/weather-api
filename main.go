@@ -1,15 +1,15 @@
 package main
 
-// this will be used as router as well
-
 import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 	"github.com/manohySr/weather-api/cache"
+	"github.com/manohySr/weather-api/security"
 	"github.com/manohySr/weather-api/weather"
 )
 
@@ -28,17 +28,33 @@ func main() {
 
 	weatherService := weather.NewWeatherService(redisClient)
 
-	app := fiber.New()
+	// Create app with security config
+	config := fiber.Config{
+		BodyLimit:             security.DefaultConfig().BodyLimit,
+		ReadTimeout:           security.DefaultConfig().ReadTimeout,
+		WriteTimeout:          security.DefaultConfig().WriteTimeout,
+		IdleTimeout:           security.DefaultConfig().IdleTimeout,
+		DisableStartupMessage: true,
+	}
+	app := fiber.New(config)
+
+	// Apply security middleware with default config
+	security.ApplySecurityMiddleware(app, security.DefaultConfig())
+
+	app.Use(func(c *fiber.Ctx) error {
+		start := time.Now()
+		duration := time.Since(start)
+		log.Printf("📝 Request => %s %s | Status: %d | Duration: %v", c.Method(), c.Path(), c.Response().StatusCode(), duration)
+		return c.Next()
+	})
 
 	app.Get("/weather/:city", func(c *fiber.Ctx) error {
 		city := strings.ToLower(c.Params("city"))
 
-		log.Println("GET /weather/", city)
 		res, err := weatherService.GetWeather(city)
 		if err != nil {
-			log.Println("Failed to get weather:", err)
+			log.Printf("[%s] Failed to get weather: %v", c.Get("X-Request-ID"), err)
 
-			// Check if it's a "city not found" error
 			if strings.Contains(err.Error(), "not found") {
 				return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 					"error": "City not found",
